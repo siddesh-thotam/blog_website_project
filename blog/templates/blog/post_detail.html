@@ -1,0 +1,97 @@
+{% extends "blog/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Back Button -->
+            <a href="{% url 'home' %}" class="btn btn-outline-primary mb-4">
+                <i class="bi bi-arrow-left"></i> Back to Posts
+            </a>
+
+            <!-- Post Content -->
+            <div class="card shadow-lg border-0">
+                {% if post.image %}
+                <img src="{{ post.image.url }}" class="card-img-top" alt="Post image"
+                     style="height: 400px; object-fit: cover;">
+                {% endif %}
+                
+                <div class="card-body p-4">
+                    <!-- Author and Date -->
+                    <div class="d-flex align-items-center mb-3">
+                        {% if post.author.profile.profile_pic %}
+                            <img src="{{ post.author.profile.profile_pic.url }}" 
+                                 class="rounded-circle me-2" 
+                                 style="width: 40px; height: 40px; object-fit: cover;">
+                        {% endif %}
+                        <div>
+                            <h6 class="mb-0">{{ post.author.username }}</h6>
+                            <small class="text-muted">
+                                Posted on {{ post.created_at|date:"F d, Y" }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Title -->
+                    <h1 class="card-title mb-4">{{ post.title }}</h1>
+
+                    <!-- Tags -->
+                    {% if tags %}
+                    <div class="mb-4">
+                        {% for tag in tags %}
+                            <span class="badge bg-secondary me-2">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Description -->
+                    <div class="card-text mb-4">
+                        {{ post.description|linebreaks }}
+                    </div>
+
+                    <!-- Share Buttons -->
+                    <div class="border-top pt-3">
+                        <h6>Share this post:</h6>
+                        <div class="d-flex gap-2">
+                            <a href="https://twitter.com/intent/tweet?text={{ post.title|urlencode }}&url={{ request.build_absolute_uri }}" 
+                               target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-twitter"></i> Twitter
+                            </a>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" 
+                               target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-facebook"></i> Facebook
+                            </a>
+                            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri|urlencode }}&title={{ post.title|urlencode }}" 
+                               target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-linkedin"></i> LinkedIn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add some custom styles -->
+<style>
+    .card {
+        border-radius: 15px;
+    }
+    
+    .card-img-top {
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+
+    .btn-outline-primary {
+        border-radius: 20px;
+    }
+
+    .badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+    }
+</style>
+{% endblock %}

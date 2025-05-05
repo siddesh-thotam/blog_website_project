@@ -1,0 +1,391 @@
+
+{% extends "blog/base.html" %}
+
+
+{% block title %}
+<!-- TITLE -->
+{% endblock %}
+
+{% block content %}
+<!-- Add this style section at the top -->
+<style>
+    .btn-hover {
+        transition: all 0.3s ease;
+    }
+
+    .btn-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .edit-icon {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background: rgba(0, 0, 0, 0.7);
+        border: 2px solid white;
+        color: white;
+        padding: 8px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+    }
+
+    .edit-icon:hover {
+        background: rgba(0, 0, 0, 0.9);
+        transform: scale(1.1);
+    }
+
+    .profile-stats {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .stat-box {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .stat-box:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .card {
+        background-color: #1e1e1e;
+        border-color: #333;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-hover {
+        position: relative;
+    }
+
+    .card-hover::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.8));
+        pointer-events: none;
+    }
+
+    .btn-outline-success {
+        color: #28a745;
+        border-color: #28a745;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #28a745;
+        color: #ffffff;
+    }
+
+    .alert {
+        background-color: #2d2d2d;
+        border-color: #333;
+        color: #ffffff;
+    }
+
+    .alert-success {
+        background-color: rgba(40, 167, 69, 0.2);
+        border-color: #28a745;
+    }
+
+    
+</style>
+{% load static %}
+
+<!-- Replace the existing navbar with this -->
+<nav class="navbar navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+      <!-- Always visible hamburger button -->
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+          <img src="{% static 'images/POSTLY1.png' %}" alt="Site Logo" class="img-fluid" style="height: 80px;">
+      </a>
+
+      <!-- Search Form -->
+      <form class="d-flex">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+  </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="sidebar">
+  <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Menu</h5>
+      <button type="button" class="btn-close text-reset bg-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+
+      <!-- Profile Section -->
+
+<!-- Replace the existing profile section -->
+<div class="text-center mb-4">
+  <div class="position-relative d-inline-block">
+      {% if request.user.profile.profile_pic %}
+          <img src="{{ request.user.profile.profile_pic.url }}"  
+               class="rounded-circle img-fluid" 
+               style="width: 150px; height: 150px; object-fit: cover;"
+               alt="Profile Picture">
+      {% else %}
+          <img src="{% static 'images/default.jpeg' %}" 
+               class="rounded-circle img-fluid" 
+               style="width: 150px; height: 150px; object-fit: cover;"
+               alt="Default Profile Picture">
+      {% endif %}
+      
+      <button class="edit-icon" data-bs-toggle="modal" data-bs-target="#profilePicModal">
+          <i class="bi bi-camera-fill"></i>
+      </button>
+  </div>
+  
+  <h5 class="mt-3">{{ request.user.username }}</h5>
+  <div class="profile-stats">
+      <a href="{% url 'my_posts' %}" class="stat-box text-decoration-none text-white">
+          <small class="d-block text-muted">Posts</small>
+          <span>{{ request.user.post_set.count }}</span>
+      </a>
+      <div class="stat-box">
+          <small class="d-block text-muted">Joined</small>
+          <span>{{ request.user.date_joined|date:"M Y" }}</span>
+      </div>
+  </div>
+</div>
+      <!-- Navigation Links -->
+      <div class="list-group list-group-flush">
+          <a href="{% url 'home' %}" class="list-group-item list-group-item-action bg-transparent text-white">
+              <i class="bi bi-house-door me-2"></i> Home
+          </a>
+          <a href="#" class="list-group-item list-group-item-action bg-transparent text-white">
+              <i class="bi bi-info-circle me-2"></i> About
+          </a>
+          
+
+
+          {% if request.user.is_authenticated %}
+              <a href="{% url 'form' %}" class="list-group-item list-group-item-action bg-transparent text-white">
+                  <i class="bi bi-plus-circle me-2"></i> Create Post
+              </a>
+              <a href="{% url 'logout' %}" class="list-group-item list-group-item-action bg-transparent text-white">
+                  <i class="bi bi-box-arrow-right me-2"></i> Logout
+              </a>
+          {% else %}
+              <a href="{% url 'login' %}" class="list-group-item list-group-item-action bg-transparent text-white">
+                  <i class="bi bi-box-arrow-in-right me-2"></i> Login
+              </a>
+          {% endif %}
+      </div>
+  </div>
+</div>
+
+
+
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-success">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+
+
+<!-- related POSTS  -->
+
+<div class="d-flex flex-wrap gap-3 justify-content-between align-items-end mt-4 mb-2"   style="height:50px; width:1200px;">
+  <h2> BLOGS </h2>
+  <h2> Related Posts.... </h2>
+  </div>
+
+
+<!-- Container to align all cards to the right -->
+<div class="container-fluid my-3 px-2">
+<!-- Blog + Flex Card ROW 1 -->
+<div class="d-flex gap-5 mb-4 " style="width: 100%;">
+
+  <!-- BIG BLOG CARD 1 -->
+  <div class="card border border-dark" style="height: 400px; width: 900px; overflow: hidden;">
+    <div class="row g-0 h-100">
+      <div class="col-md-4" style="height: 100%;">
+        <img src="{% static 'images/cyber-blog1.jpeg' %}" class="w-100 h-100" style="object-fit: cover;" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body h-100 d-flex flex-column justify-content-evenly">
+          <h5 class="card-title">Alexis Blake</h5>
+          <h2 class="card-title">CyberSecurity Roadmap for Beginners</h2>
+          <p class="card-text" style="max-width: 600px;">
+            Cybersecurity is the digital armor that protects our data...
+          </p>
+          <p class="card-text"><small class="text-active">Technology | Education </small></p>
+          <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+          <!-- Replace the "Read more" button in your post cards -->
+          <a href="#" class="btn btn-primary">
+            <i class="bi bi-book"></i> Coming Soon
+        </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Small CARD 1 -->
+  <div class="card-hover border border-dark p-3 text-white"
+       style="height: 400px; width: 400px; background-image: url('{% static 'images/pc-blog1.jpeg' %}'); background-size: cover; background-position: center;">
+    <div class="d-flex flex-column h-100 justify-content-end">
+      <div class="mb-auto">Ethan Blake</div>
+      <h5 class="fw-bold">Ultimate PC Setup: Power, Performance & Style</h5>
+      <p class="text-truncate mb-0" style="max-width: 300px;">This is a long line of text that should be truncated if it overflows.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Blog + Flex Card ROW 2 -->
+<div class="d-flex gap-5 mb-4" style="width: 100%;">
+  <!-- BIG BLOG CARD 2 -->
+  <div class="card border border-dark" style="height: 400px; width: 900px; overflow: hidden;">
+    <div class="row g-0 h-100">
+      <div class="col-md-4" style="height: 100%;">
+        <img src="{% static 'images/food-blog1.jpeg' %}" class="w-100 h-100" style="object-fit: cover;" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body h-100 d-flex flex-column justify-content-evenly">
+          <h5 class="card-title">Nirvana Josher</h5>
+          <h2 class="card-title">Breakfast Bliss: Fuel Your Day the Delicious Way</h2>
+          <p class="card-text" style="max-width: 600px;">Whether it's a hearty omelette...</p>
+          <p class="card-text"><small class="text-active">Food | Lifestyle </small></p>
+          <p class="card-text"><small class="text-muted">Last updated 10 hrs ago</small></p>
+          <a href="#" class="btn btn-primary">
+            <i class="bi bi-book"></i> Coming Soon
+        </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- small CARD 2 -->
+  <div class="card-hover border border-dark p-3 text-white"
+       style="height: 400px; width: 400px; background-image: url('{% static 'images/car-blog3.jpeg' %}'); background-size: cover; background-position: center;">
+    <div class="d-flex flex-column h-100 justify-content-end">
+      <div class="mb-auto">Lena Hartmann</div>
+      <h5 class="fw-bold">911 Carrera GTS 2025: The Icon Evolved</h5>
+      <p class="text-truncate mb-0" style="max-width: 300px;">Timeless design meets modern performance...</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Blog + Flex Card ROW 3 -->
+<div class="d-flex gap-5 mb-4" style="width: 100%;">
+
+  <!-- BIG BLOG CARD 3 -->
+  <div class="card border border-dark" style="height: 400px; width: 900px; overflow: hidden;">
+    <div class="row g-0 h-100">
+      <div class="col-md-4" style="height: 100%;">
+        <img src="{% static 'images/trip-blog1.jpeg' %}" class="w-100 h-100" style="object-fit: cover;" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body h-100 d-flex flex-column justify-content-evenly">
+          <h5 class="card-title">Louis Decker</h5>
+          <h2 class="card-title">Wander Far, Discover More: The Magic of Every Journey</h2>
+          <p class="card-text" style="max-width: 600px;">Every trip is a new chapter...</p>
+          <p class="card-text"><small class="text-active">Travel | Lifestyle </small></p>
+          <p class="card-text"><small class="text-muted">Last updated 2 months ago</small></p>
+          <a href="#" class="btn btn-primary">
+            <i class="bi bi-book"></i> Coming Soon
+        </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- small CARD 3 -->
+  <div class="card-hover border border-dark p-3 text-white"
+       style="height: 400px; width: 400px; background-image: url('{% static 'images/japan-blog4.jpeg' %}'); background-size: cover; background-position: center;">
+    <div class="d-flex flex-column h-100 justify-content-end">
+      <div class="mb-auto">Alya Grant</div>
+      <h5 class="fw-bold">Top 5 Places to visit in Japan in 2025.</h5>
+      <p class="text-truncate mb-0" style="max-width: 300px;">Wander through the ancient streets of Kyoto...</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Blog + Flex Card ROW 4 -->
+
+{% for post in posts%}
+<div class="d-flex gap-5 mb-4" style="width: 100%;">
+
+  <!-- BIG BLOG CARD 4 -->
+  <div class="card border border-dark" style="height: 400px; width: 1350px; overflow: hidden;">
+    <div class="row g-0 h-100">
+      <div class="col-md-4" style="height: 100%;">
+        <img src="{{ post.image.url }}" class="w-100 h-100" style="object-fit: cover;" alt="..." >      </div>
+      <div class="col-md-8">
+        <div class="card-body h-100 d-flex flex-column justify-content-evenly">
+          <h5 class="card-title">{{post.author}}</h5>
+          <h2 class="card-title">{{post.title}}</h2>
+          <p class="card-text text-truncate mb-0" style="max-width: 800px;">{{post.description}}</p>
+          <p class="card-text"><small class="text-active">{{ post.tags }}</small></p>
+          <p class="card-text"><small class="text-muted">{{post.created_at}}</small></p>
+          <a href="{% url 'post_detail' post.id %}" class="btn btn-primary">
+            <i class="bi bi-book"></i> Read More
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+{% endfor %}
+
+
+</div>
+
+<!-- Profile Picture Modal -->
+<div class="modal fade" id="profilePicModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Update Profile Picture</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="{% url 'update_profile_pic' %}" method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="modal-body">
+                  <div class="mb-3">
+                      <label for="profile_pic" class="form-label">Choose new profile picture</label>
+                      <input type="file" class="form-control" id="profile_pic" name="profile_pic" accept="image/*" required>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+{% endblock %}

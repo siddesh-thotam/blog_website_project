@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Postly</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #121212;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .content-wrapper {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 200px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .title {
+            font-size: 4rem;
+            margin: 2rem 0;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideIn 1s ease-out;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        .btn-custom {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            margin: 0.5rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            animation: scaleIn 0.5s ease-out backwards;
+        }
+
+        .btn-view {
+            animation-delay: 1s;
+            background: linear-gradient(45deg, #4ecdc4, #2ecc71);
+            border: none;
+        }
+
+        .btn-create {
+            animation-delay: 1.2s;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            border: none;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            .btn-custom {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <section class="hero-section">
+        <div class="content-wrapper">
+            <img src="{% static 'images/POSTLY1.png' %}" alt="Postly Logo" class="logo">
+            <h1 class="title">Welcome to Postly</h1>
+            <p class="subtitle">Share your thoughts, ideas, and stories with the world</p>
+            <div class="buttons">
+                <a href="{% url 'home' %}" class="btn btn-custom btn-view">
+                    <i class="bi bi-book-half"></i> View Blog
+                </a>
+                <a href="{% url 'register' %}" class="btn btn-custom btn-create">
+                    <i class="bi bi-pencil-square"></i> Create Post
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            const colors = ['#4ecdc4', '#ff6b6b', '#2ecc71', '#ff8e53'];
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 10 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.opacity = Math.random() * 0.5;
+                particle.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particles.appendChild(particle);
+            }
+        }
+
+        createParticles();
+    </script>
+</body>
+</html>
