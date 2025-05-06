@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@kq$=fcwf3jioc6@tx_s!_6n)+8m62bs%_sfy7l!t-p)n5eosb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['.vercel.app']
 
@@ -52,6 +52,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SITE_ID = 1
+
 
 ROOT_URLCONF = 'myblog.urls'
 
@@ -122,6 +125,10 @@ STATIC_URL = 'static/'
 
 # If you're in development
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Default primary key field type
