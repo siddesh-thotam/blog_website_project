@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-@kq$=fcwf3jioc6@tx_s!_6n)+8m62bs%_sfy7l!t-p)n5eosb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app','blog-project.onrender.com','*']
+ALLOWED_HOSTS = ['.vercel.app','blog-project.onrender.com']
 
 
 # Application definition
@@ -52,7 +52,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← ADD THIS
+
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 SITE_ID = 1
 
@@ -85,8 +90,7 @@ import os
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',  # fallback for local dev
-        conn_max_age=600
+        default=os.getenv('DATABASE_URL')
     )
 }
 
