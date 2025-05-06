@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-@kq$=fcwf3jioc6@tx_s!_6n)+8m62bs%_sfy7l!t-p)n5eosb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['.vercel.app','blog-project.onrender.com','*']
 
 
 # Application definition
@@ -79,11 +80,14 @@ WSGI_APPLICATION = 'myblog.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import dj_database_url
+import os
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',  # fallback for local dev
+        conn_max_age=600
+    )
 }
 
 
@@ -125,8 +129,6 @@ STATIC_URL = 'static/'
 
 # If you're in development
 STATICFILES_DIRS = [BASE_DIR / 'static']
-
-
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
