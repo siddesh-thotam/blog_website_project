@@ -151,11 +151,11 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'    # where to go after login
 LOGOUT_REDIRECT_URL = 'login'  # where to go after logout
 
-
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dx0wy7iog',
-    'API_KEY': '528575744368398',
-    'API_SECRET': 'cnc5zdGZZepkn35cRKQTgtK7BL0',
+    'CLOUD_NAME': os.environ.get('CLOUD_NAME'),
+    'API_KEY': os.environ.get('API_KEY'),
+    'API_SECRET': os.environ.get('API_SECRET'),
 }
+
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
